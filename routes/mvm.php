@@ -13,38 +13,22 @@
 |
 */
 
-$mvm->get('/info', function () use ($mvm) {
-         return phpinfo();
-});
 
-$mvm->get('/testdb', function () use ($mvm) {
-
-        try {
-            DB::connection('ts3')->getPdo();
-            $data = "Connected successfully to: " . DB::connection('ts3')->getDatabaseName();
-            
-        } catch (\Exception $e) {
-            return response()->json(
-                [   'status'       =>  400,
-                    'success'   =>  false,
-                    'message'   =>  'Request Failed',
-                    'data'      =>  [$e]
-                ], 400);
-        }
-        
-        return response()->json(
-            [   'status'       =>  200,
-                'success'   =>  true,
-                'message'   =>  'Request Success',
-                'data'      =>  [$data]
-            ], 200);
-});
 
 
 $mvm->group(['prefix' => 'mvm/'], function () use ($mvm) {
-    $mvm->group(['middleware' => 'CheckToken'], function () use ($mvm) {
+    $mvm->group(['middleware' => 'CheckKey'], function () use ($mvm) {
         $mvm->post('auth/login', 'AuthController@login');
         $mvm->post('auth/logout', 'AuthController@logout');
+
+
+
+        $mvm->group(['middleware' => 'Session'], function () use ($mvm) {
+            $mvm->post('home', 'MvmController@home');
+            
+        });
+
+
+
     });
- 
 });

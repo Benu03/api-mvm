@@ -77,8 +77,13 @@ $app->configure('app');
 // ]);
 
 $app->routeMiddleware([
-    'CheckToken' => App\Http\Middleware\CheckToken::class,
+    'CheckKey' => App\Http\Middleware\KeyAuthCheck::class,
 ]);
+
+$app->routeMiddleware([
+    'Session' => App\Http\Middleware\SessionTokenCheck::class,
+]);
+
 
 /*
 |--------------------------------------------------------------------------

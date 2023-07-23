@@ -3,10 +3,10 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Models\TokenAuth;
+use App\Models\KeyAuth;
 use Illuminate\Support\Facades\Log;
 
-class CheckToken
+class KeyAuthCheck
 {
     /**
      * Handle an incoming request.
@@ -17,7 +17,7 @@ class CheckToken
      */
     public function handle($request, Closure $next)
     {
-        $model = new TokenAuth;
+        $model = new KeyAuth;
 
         $all_headers    = $request->header();
         // Log::info($all_headers);

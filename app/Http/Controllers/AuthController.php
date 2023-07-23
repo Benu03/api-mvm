@@ -15,7 +15,8 @@ use App\Models\UserModel;
 
 class AuthController extends Controller
 {
-    public function login(Request $request){
+    public function login(Request $request)
+    {
       
         log::info('Begin login User '.$request->username);
 
@@ -30,14 +31,15 @@ class AuthController extends Controller
                     if(isset($LoginCheckValidation))
                     {
 
-                        $response = $LoginCheckValidation;
 
                         $DatainsertSession = [
                             'session_token' => sha1(Str::random(40)),
-                            'username' => $request->username,
-                            'is_login' => true
+                            'username' => $request->username
                         ];
+
                         $loginSession = UserModel::InsertLoginSession($DatainsertSession);
+
+                        $UpdateLogin = UserModel::UpdateLoginUSer($data);
 
                         log::info('End login User '.$request->username);
 
@@ -45,11 +47,13 @@ class AuthController extends Controller
                             [   'status'    =>  200,
                                 'success'   =>  true,
                                 'message'   =>  'success',
-                                'data'      =>  $response
+                                'data'      => [
+                                                'session' => UserModel::GetSessionUser($data) ,
+                                                'user' => UserModel::GetUserData($data),
+                                                'type' =>   UserModel::GetUserClient($data)                          
+                                              ]
                             ], 200);
                         
-
-
                     }
                     else
                     {
@@ -96,6 +100,8 @@ class AuthController extends Controller
         
     
     }
+
+
 
 
 
