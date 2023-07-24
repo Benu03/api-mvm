@@ -38,7 +38,6 @@ class AuthController extends Controller
                         ];
 
                         $loginSession = UserModel::InsertLoginSession($DatainsertSession);
-
                         $UpdateLogin = UserModel::UpdateLoginUSer($data);
 
                         log::info('End login User '.$request->username);

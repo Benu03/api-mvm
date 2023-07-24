@@ -24,14 +24,13 @@ class SessionTokenCheck
 
         $today = date('Y-m-d H:i:s');
 
-        if(isset($all_headers['key-mvm'][0])){
+        if(isset($all_headers['session-token'][0])){
             $data = $model->select('id','session_token','username','created_date')
                     ->where('session_token', $all_headers['session-token'][0])
                     ->first();
 
             if(empty($data))
             {
-
                 return response()->json(
                 [   'status'       =>  401,
                     'success' => false,
@@ -46,17 +45,33 @@ class SessionTokenCheck
 
                 $created_date = Carbon::parse($data['created_date']);
                 $now = Carbon::now();
-                $diff_in_hours = $now->diffInHours($created_date);
-
-                if($diff_in_hours > 3)
+                $diff_in_hours = $now->diffInMinutes($created_date);
+                if($diff_in_hours > 30)
                 {
-                return response()->json(
+                    return response()->json(
                     [
                         'success' => false,
                         'message' => 'your session expired please login again',
-                        'data' => [$created_date,$now,$diff_in_hours]
+                        'data' => []
                     ], 401);
                 }
+                else
+                {
+                    try 
+                    {
+                    $model->where('session_token', $all_headers['session-token'][0])->update( ['created_date' => date("Y-m-d H:i:s")]);
+                    } 
+                    catch (\Exception $e) 
+                    {
+                        return response()->json(
+                            [   'status'       =>  400,
+                                'success'   =>  false,
+                                'message'   =>  'Request Failed',
+                                'data'      =>  [$e]
+                            ], 400);
+                    }    
+                }
+
 
             }
         }
